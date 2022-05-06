@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { nanoid } from 'nanoid';
 import Section from './Section/Section';
 import Phonebook from './Phonebook/Phonebook';
+import Filter from './Filter/Filter';
 import ContactsList from './ContactsList/ContactsList';
 
 class App extends Component {
@@ -12,17 +13,17 @@ class App extends Component {
       { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
-    name: '',
-    number: '',
+
     filter: '',
   };
 
   onChangeInput = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
-  onAddUser = event => {
-    event.preventDefault();
-    const { contacts, name } = this.state;
+
+  onAddUser = contact => {
+    const { contacts } = this.state;
+    const { name, number } = contact;
     const searchedName = name.toLowerCase();
 
     if (
@@ -36,17 +37,25 @@ class App extends Component {
         contacts: [
           ...prevState.contacts,
           {
-            id: [nanoid()],
-            name: this.state.name,
-            number: this.state.number,
+            id: nanoid(),
+            name,
+            number,
           },
         ],
       };
     });
   };
 
+  getFilteredContacts = () => {
+    const { contacts, filter } = this.state;
+    if (filter === '') return contacts;
+    const filterToLowerCase = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filterToLowerCase)
+    );
+  };
+
   onDeleteUser = id => {
-    console.log(id);
     this.setState(prevState => {
       return {
         contacts: prevState.contacts.filter(element => element.id !== id),
@@ -62,9 +71,14 @@ class App extends Component {
             onChangeInput={this.onChangeInput}
             onAddUser={this.onAddUser}
           />
-          <ContactsList
-            contacts={this.state.contacts}
+          <h3>Contacts</h3>
+          <Filter
+            value={this.state.filter}
             onChangeInput={this.onChangeInput}
+          />
+          <ContactsList
+            contacts={this.getFilteredContacts()}
+            // onChangeInput={this.onChangeInput}
             onDeleteUser={this.onDeleteUser}
             filter={this.state.filter}
           />

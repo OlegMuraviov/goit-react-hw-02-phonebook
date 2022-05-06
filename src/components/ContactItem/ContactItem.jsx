@@ -1,15 +1,13 @@
-const Contact = ({ contact, onDeleteUser, filter }) => {
+const ContactItem = ({ contact, onDeleteUser }) => {
   const { id, name, number } = contact;
 
   return (
-    name.toLowerCase().includes(filter.toLowerCase()) && (
-      <li>
-        {name}: {number}{' '}
-        <button type="button" onClick={() => onDeleteUser(id)}>
-          Delete
-        </button>
-      </li>
-    )
+    <li>
+      {name}: {number}{' '}
+      <button type="button" onClick={() => onDeleteUser(id)}>
+        Delete
+      </button>
+    </li>
   );
 };
-export default Contact;
+export default ContactItem;
